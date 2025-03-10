@@ -107,18 +107,24 @@ install_python_modules() {
     done
 }
 
-# Funksjon for å laste ned og plassere Python-skript
+# Funksjon for å klone og plassere Python-skript
 fetch_scripts() {
-    echo "🔹 Laster ned Python-skript fra repo..."
-    sudo rm -f /usr/local/bin/scan_and_import.py /usr/local/bin/web_ui.py /usr/local/bin/index.html
+    echo "🔹 Laster ned og oppdaterer Python-skript fra GitHub repo..."
 
-    if sudo curl -fLo /usr/local/bin/scan_and_import.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/scan_and_import.py &&
-       sudo curl -fLo /usr/local/bin/web_ui.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/web_ui.py &&
-       sudo curl -fLo /usr/local/bin/index.html https://raw.githubusercontent.com/techneguru/asset-inventory/main/index.html; then
-        echo "✅ Python-skript lastet ned og lagret i /usr/local/bin/"
-        sudo chmod +x /usr/local/bin/*.py
+    # Slett gammel katalog hvis den finnes
+    sudo rm -rf /usr/local/bin/asset-inventory
+
+    # Klon repo på nytt
+    sudo git clone https://github.com/techneguru/asset-inventory.git /usr/local/bin/asset-inventory
+
+    if [ $? -eq 0 ]; then
+        echo "✅ Repo klonet til /usr/local/bin/asset-inventory"
+
+        # Sett kjørbare rettigheter på Python-skript
+        sudo chmod +x /usr/local/bin/asset-inventory/*.py
+        echo "✅ Python-skript gjort kjørbare"
     else
-        echo "❌ Feil ved nedlasting av ett eller flere filer. Kontroller GitHub-repoet og nettverk!"
+        echo "❌ Feil ved kloning av repo! Kontroller GitHub-lenken og nettverket."
         exit 1
     fi
 }
