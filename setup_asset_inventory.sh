@@ -110,9 +110,9 @@ install_python_modules() {
 # Funksjon for å laste ned og plassere Python-skript
 fetch_scripts() {
     echo "🔹 Laster ned Python-skript fra repo..."
-    curl -o /usr/local/bin/scan_and_import.py https://raw.githubusercontent.com/techneGURU/asset-inventory/main/scan_and_import.py
-    curl -o /usr/local/bin/web_ui.py https://raw.githubusercontent.com/techneGURU/asset-inventory/main/web_ui.py
-    curl -o /usr/local/bin/index.html https://raw.githubusercontent.com/techneGURU/asset-inventory/main/index.html
+    curl -o /usr/local/bin/scan_and_import.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/scan_and_import.py
+    curl -o /usr/local/bin/web_ui.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/web_ui.py
+    curl -o /usr/local/bin/index.html https://raw.githubusercontent.com/techneguru/asset-inventory/main/index.html
     chmod +x /usr/local/bin/*.py
 }
 
