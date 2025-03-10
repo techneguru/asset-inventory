@@ -110,10 +110,17 @@ install_python_modules() {
 # Funksjon for å laste ned og plassere Python-skript
 fetch_scripts() {
     echo "🔹 Laster ned Python-skript fra repo..."
-    curl -o /usr/local/bin/scan_and_import.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/scan_and_import.py
-    curl -o /usr/local/bin/web_ui.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/web_ui.py
-    curl -o /usr/local/bin/index.html https://raw.githubusercontent.com/techneguru/asset-inventory/main/index.html
-    chmod +x /usr/local/bin/*.py
+    sudo rm -f /usr/local/bin/scan_and_import.py /usr/local/bin/web_ui.py /usr/local/bin/index.html
+
+    if sudo curl -fLo /usr/local/bin/scan_and_import.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/scan_and_import.py &&
+       sudo curl -fLo /usr/local/bin/web_ui.py https://raw.githubusercontent.com/techneguru/asset-inventory/main/web_ui.py &&
+       sudo curl -fLo /usr/local/bin/index.html https://raw.githubusercontent.com/techneguru/asset-inventory/main/index.html; then
+        echo "✅ Python-skript lastet ned og lagret i /usr/local/bin/"
+        sudo chmod +x /usr/local/bin/*.py
+    else
+        echo "❌ Feil ved nedlasting av ett eller flere filer. Kontroller GitHub-repoet og nettverk!"
+        exit 1
+    fi
 }
 
 # Funksjon for å verifisere tjenester
