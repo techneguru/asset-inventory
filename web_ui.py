@@ -1,30 +1,7 @@
-#!/usr/bin/env python3
 from flask import Flask, render_template_string
 import psycopg2
 
 app = Flask(__name__)
-
-HTML = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Asset Inventory</title>
-</head>
-<body>
-    <h1>Asset Inventory</h1>
-    <table border="1">
-        <tr><th>ID</th><th>IP</th><th>Hostname</th><th>MAC</th><th>Vendor</th><th>OS</th><th>Ports</th><th>Timestamp</th></tr>
-        {% for asset in assets %}
-        <tr>
-            <td>{{ asset[0] }}</td><td>{{ asset[1] }}</td><td>{{ asset[2] }}</td>
-            <td>{{ asset[3] }}</td><td>{{ asset[4] }}</td><td>{{ asset[5] }}</td>
-            <td>{{ asset[9] }}</td><td>{{ asset[10] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
-'''
 
 def get_assets():
     conn = psycopg2.connect(
@@ -35,15 +12,32 @@ def get_assets():
         port="5432"
     )
     cur = conn.cursor()
-    cur.execute("SELECT * FROM assets ORDER BY timestamp DESC LIMIT 50;")
-    data = cur.fetchall()
+    cur.execute("SELECT * FROM assets ORDER BY last_scanned DESC LIMIT 50;")
+    rows = cur.fetchall()
     cur.close()
     conn.close()
-    return data
+    return rows
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template_string(HTML, assets=get_assets())
+    assets = get_assets()
+    return render_template_string("""
+        <h1>Asset Inventory</h1>
+        <table border="1">
+            <tr>
+                <th>ID</th><th>IP Address</th><th>MAC Address</th><th>Hostname</th>
+                <th>Vendor</th><th>OS</th><th>Layer2 Protocols</th><th>Layer3 Protocols</th>
+                <th>Services</th><th>Open Ports</th><th>Last Scanned</th>
+            </tr>
+            {% for row in assets %}
+            <tr>
+                {% for cell in row %}
+                <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    """, assets=assets)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True)
